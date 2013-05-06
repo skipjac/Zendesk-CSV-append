@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'faster_csv'
+require 'CSV'
 require 'httparty'
 require 'FileUtils'
 require 'nokogiri'
@@ -21,7 +21,7 @@ class Zenbody
   def self.email(data)
     newJSON = JSON.parse(data)
     if newJSON.length > 0
-      return newJSON['name']
+      return newJSON['user']['name']
     else
       return 'none found
       '
@@ -43,7 +43,7 @@ end
 
 class Zenuser
   include HTTParty
-  base_uri 'http://skipjack.zendesk.com'
+  base_uri 'https://something.zendesk.com'
   headers 'content-type'  => 'application/json'
   def initialize(u, p)
       @auth = {:username => u, :password => p}
@@ -68,9 +68,9 @@ x = Zenuser.new(login, password)
 y = Zenbody.new()
 
  
-arr_of_arrs = FasterCSV.read(infile)  
+arr_of_arrs = CSV.read(infile)  
 
-FasterCSV.open(outfile + '-with-comments.csv', 'w', :force_quotes => true, :col_sep =>'|') do |csv|
+CSV.open(outfile + '-with-comments.csv', 'w', :force_quotes => true, :col_sep =>'|') do |csv|
   arr_of_arrs.each do |row|
     if is_a_number?(row[1])
       ticketComment = y.comments(x.tickets(row[1]))
